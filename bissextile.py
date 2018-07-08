@@ -1,4 +1,4 @@
-#!/usr/bin/python3.4
+#!/usr/local/bin/python3.6
 # -*-coding:Utf-8 -*
 
 while 1:
