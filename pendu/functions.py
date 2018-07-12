@@ -1,4 +1,4 @@
-def get_letter():
+def         get_letter():
     while (1):
         letter = input("Quelle lettre veux-tu essayer ? (Ou tapes le mot complet si tu as deviner)\n");
         letter = str(letter).lower()
