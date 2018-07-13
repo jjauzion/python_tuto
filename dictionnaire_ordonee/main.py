@@ -23,6 +23,7 @@ print(len(legumes))
 legumes.reverse()
 fruits = fruits + legumes
 print("6: ", fruits)
+fruits + 9
 
 del fruits['haricot']
 print("7: ", fruits)

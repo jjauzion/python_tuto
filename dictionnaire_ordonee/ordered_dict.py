@@ -38,7 +38,8 @@ class       OrderedDictionary:
         return len(self._key)
 
     def     __add__(self, obj2add):
-        if type(obj2add) is not type(self):
+        if type(obj2add)\
+                is not type(self):
             raise TypeError(\
                     "{} can't be added to OrderedDictionary"\
                     .format(type(obj2add)))
