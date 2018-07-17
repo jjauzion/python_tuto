@@ -7,11 +7,21 @@ class       Map:
     """Class Map()\n\
             | Create a new map object.\n\
             |\n\
-            | Methods defined here:\n\
+            | Public methods defined here:\n\
             |\n\
             | generate_from_file(self, file_name)\n\
             |     Generate the map from the file in argument.\n\
             |     Path of the map file is defined in param.py\n\
+            |\n\
+            | add_robot(self, robot)\n\
+            |     Link robot to the map\n\
+            |\n\
+            | get_case(self, x, y)\n\
+            |     Return the value of the case at coordinate (x,y)\n\
+            |\n\
+            | save(self, name)\n\
+            |     Save the current status of the map with the name\
+            given in argument. If name already exist ask for confirmation\n\
             |\n\
             | __str__(self)\n\
             |     Return 2d printable string of the current map\n"""
@@ -67,6 +77,9 @@ class       Map:
         return self._map[x][y]
 
     def     save(self, name):
+        if name == "":
+            print("La partie n'a pas été sauvegardé")
+            return False
         if not exists(save_path):
             makedirs(save_path)
         if isfile(save_path + name + ".txt"):
@@ -77,6 +90,7 @@ class       Map:
         save = self.__str__()
         with open(save_path + name + ".txt", 'w') as my_file:
             my_file.write(save)
+            print("Sauvegarde effectué ! ({})".format(save_path + name + ".txt"))
         return True
 
     def     __str__(self):

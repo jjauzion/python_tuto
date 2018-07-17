@@ -5,13 +5,14 @@ class       Robot:
     """Class Robot()\n\
             | Create a new robot object.\n\
             |\n\
-            | Methods defined here:\n\
+            | Public methods defined here:\n\
             |\n\
             | move(self, command)\n\
             |     Try to move the robot base on the command\n"""
 
     def     __init__(self, my_map):
         self._map = my_map
+        self._map.add_robot(self)
         self.position = {'x': 0, 'y': 0}
 
     def     _update_coord(self, direction, coord):
@@ -57,14 +58,13 @@ class       Robot:
             assert command_list.find(direction) >= 0
         except (IndexError, AssertionError):
             usage()
+            return False
+        if len(command) > 1 and not (is_int(command[1:])):
+            usage()
+            return False
+        elif len(command) > 1:
+            length = int(command[1:])
         else:
-            if len(command) > 1 and not (is_int(command[1:])):
-                usage()
-                return False
-            elif len(command) > 1:
-                length = int(command[1:])
-            else:
-                length = 1
-            self._move_toward(direction, length)
-            return True
-
+            length = 1
+        self._move_toward(direction, length)
+        return True

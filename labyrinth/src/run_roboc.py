@@ -4,14 +4,12 @@ from .Robot import Robot
 from .param import *
 
 def     run_roboc():
+    map = Map()
+    robot = Robot(map)
     map_name = None
     while map_name == None:
         map_name = get_map_choice()
-    map = Map()
-    robot = Robot(map)
-    map.add_robot(robot)
     map.generate_from_file(map_name)
-    print("\nGuide le robot ({}) vers la sortie ({})!".format(robot_char, exit_char))
     usage()
     print(map, "\n")
     while (map._exit_coord != map.robot.position):
@@ -28,13 +26,17 @@ def     run_roboc():
         robot.move(command)
         print(map, "\n")
     if (map._exit_coord == map.robot.position):
-        print("\n-------------\nVictoire !!\n--------------")
+        print("\n-------------\nVictoire !!\n-------------")
     else:
         print("\nA bientôt !!")
 
 def     get_map_choice():
+    """Ask user to enter the map number.\n\
+            Return the map name associated with the number entered by the user\n\
+            or return None if the number entered is wrong"""
+
     maps = get_map_list()
-    map_number = input("Entrez le numéro de labyrinthe pour commencer à jouer : ")
+    map_number = input("\nEntrez le numéro de labyrinthe pour commencer à jouer : ")
     try:
         map_number = int(map_number)
         assert map_number - 1 < len(maps) and map_number >= 1
@@ -44,6 +46,9 @@ def     get_map_choice():
         return None
 
 def     get_map_list():
+    """Print the list of available maps in the maps folder\ 
+    (defined in param.py) and return a list with the maps name"""
+
     maps = listdir(maps_path)
     print("Labyrinthes existants :")
     for i, map in enumerate(maps):
