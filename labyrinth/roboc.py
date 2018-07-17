@@ -1,8 +1,7 @@
 #!/usr/local/bin/python3.6
 # -*-coding:Utf-8 -*
 
-from src import *
-import src.param as param
+from src.run_roboc import run_roboc
 
 print("/----------------------------------------------------------\\")
 print("|  _  .-')              .-. .-')                           |")
@@ -14,37 +13,6 @@ print("|  |  |_.' |\_) |  |\|  || .-. `. \_) |  |\|  | /_) |OO  ) |")
 print("|  |  .  '.'  \ |  | |  || |  \  |  \ |  | |  | ||  |`-'|  |")
 print("|  |  |\  \    `'  '-'  '| '--'  /   `'  '-'  '(_'  '--'\  |")
 print("|  `--' '--'     `-----' `------'      `-----'    `-----'  |")
-print("\----------------------------------------------------------/")
+print("\----------------------------------------------------------/\n\n")
 
-my_map = Map.Map()
-print(my_map)
-robot = Robot.Robot(my_map)
-my_map.add_robot(robot)
-my_map.generate_from_file("facile.txt", param)
-print(my_map)
-
-robot.move("N2", param)
-print("N2")
-print(my_map)
-robot.move("O4", param)
-print("O4")
-print(my_map)
-robot.move("E", param)
-print("E")
-print(my_map)
-robot.move("S2", param)
-print("S2")
-print(my_map)
-robot.move("St", param)
-print("St")
-print(my_map)
-robot.move("S1.5", param)
-print("S1.5")
-print(my_map)
-robot.move("S1", param)
-print("S1")
-print(my_map)
-robot.move("S", param)
-print("S")
-print(my_map)
-#my_map.generate_from_file("empty.txt", param)
+run_roboc()

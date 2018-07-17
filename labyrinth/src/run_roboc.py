@@ -1,0 +1,54 @@
+from os import listdir
+from .Map import Map
+from .Robot import Robot
+from .param import *
+
+def     run_roboc():
+    map_name = None
+    while map_name == None:
+        map_name = get_map_choice()
+    map = Map()
+    robot = Robot(map)
+    map.add_robot(robot)
+    map.generate_from_file(map_name)
+    print("\nGuide le robot ({}) vers la sortie ({})!".format(robot_char, exit_char))
+    usage()
+    print(map, "\n")
+    while (map._exit_coord != map.robot.position):
+        command = input("--> ")
+        if command == quit_command:
+            save = input("Entrez le nom de la sauvegarde ('q' pour quitter): ")
+            if save == 'q':
+                break
+            elif map.save(save):
+                break
+            else:
+                print(map, "\n")
+                continue
+        robot.move(command)
+        print(map, "\n")
+    if (map._exit_coord == map.robot.position):
+        print("\n-------------\nVictoire !!\n--------------")
+    else:
+        print("\nA bientôt !!")
+
+def     get_map_choice():
+    maps = get_map_list()
+    map_number = input("Entrez le numéro de labyrinthe pour commencer à jouer : ")
+    try:
+        map_number = int(map_number)
+        assert map_number - 1 < len(maps) and map_number >= 1
+        return maps[map_number - 1]
+    except (ValueError, AssertionError):
+        print("\nMauvaise saisie !\n")
+        return None
+
+def     get_map_list():
+    maps = listdir(maps_path)
+    print("Labyrinthes existants :")
+    for i, map in enumerate(maps):
+        if map.find(".txt") != -1:
+            map = map.replace(".txt", "")
+            print("  {} - {}.".format(i + 1, map))
+    return maps
+
