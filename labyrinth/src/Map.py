@@ -1,7 +1,9 @@
+# -*-coding:Utf-8 -*
+
 from .RobocError import RobocError
-from os import makedirs
-from os.path import exists, isfile
-from .param import *
+import os
+import os.path
+import src.param as param
 
 class       Map:
     """Class Map()\n\
@@ -34,7 +36,7 @@ class       Map:
     def     _find_robot(self):
         self.robot.position['x'] = 0
         for line in self._map:
-            self.robot.position['y'] = is_in_list(line, robot_char)
+            self.robot.position['y'] = param.is_in_list(line, param.robot_char)
             if (self.robot.position['y'] != -1):
                 break
             self.robot.position['x'] += 1
@@ -48,7 +50,7 @@ class       Map:
     def     _get_map_exit(self):
         self._exit_coord['x'] = 0
         for line in self._map:
-            self._exit_coord['y'] = is_in_list(line, exit_char)
+            self._exit_coord['y'] = param.is_in_list(line, param.exit_char)
             if (self._exit_coord['y'] != -1):
                 break
             self._exit_coord['x'] += 1
@@ -61,12 +63,12 @@ class       Map:
         self.robot = robot
 
     def     generate_from_file(self, file_name):
-        with open(maps_path + file_name, "r") as my_file:
+        with open(param.maps_path + file_name, "r") as my_file:
             content = my_file.read()
-        if (content.find(robot_char) == -1) |\
-                (content.find(exit_char) == -1):
+        if (content.find(param.robot_char) == -1) |\
+                (content.find(param.exit_char) == -1):
             raise RobocError("Le fichier {} n'est pas une carte valide"\
-                    .format(maps_path + file_name))
+                    .format(param.maps_path + file_name))
         self._map = content.split("\n")
         self._split_lines()
         self._get_map_size()
@@ -80,17 +82,17 @@ class       Map:
         if name == "":
             print("La partie n'a pas été sauvegardé")
             return False
-        if not exists(save_path):
-            makedirs(save_path)
-        if isfile(save_path + name + ".txt"):
+        if not os.path.exists(param.save_path):
+            os.makedirs(param.save_path)
+        if os.path.isfile(param.save_path + name + ".txt"):
             confirm = input("Ce nom est déjà pris. Voulez-vous écraser le labyrinthe existant? (o pour confirmer)\n")
             if confirm != "o":
                 print("La partie n'a pas été sauvegardé")
                 return False
         save = self.__str__()
-        with open(save_path + name + ".txt", 'w') as my_file:
+        with open(param.save_path + name + ".txt", 'w') as my_file:
             my_file.write(save)
-            print("Sauvegarde effectué ! ({})".format(save_path + name + ".txt"))
+            print("Sauvegarde effectué ! ({})".format(param.save_path + name + ".txt"))
         return True
 
     def     __str__(self):

@@ -1,38 +1,23 @@
-from os import listdir
 from .Map import Map
 from .Robot import Robot
-from .param import *
+import os
+import src.param as param
 
-def     run_roboc():
+# -*-coding:Utf-8 -*
+
+def     init_game():
     map = Map()
     robot = Robot(map)
+    print("Quelle carte voulez-vous héberger sur le serveur ?\n")
     map_name = None
     while map_name == None:
         map_name = get_map_choice()
     map.generate_from_file(map_name)
-    usage()
-    print(map, "\n")
-    while (map._exit_coord != map.robot.position):
-        command = input("--> ")
-        if command == quit_command:
-            save = input("Entrez le nom de la sauvegarde ('q' pour quitter): ")
-            if save == 'q':
-                break
-            elif map.save(save):
-                break
-            else:
-                print(map, "\n")
-                continue
-        robot.move(command)
-        print(map, "\n")
-    if (map._exit_coord == map.robot.position):
-        print("\n-------------\nVictoire !!\n-------------")
-    else:
-        print("\nA bientôt !!")
+    return (map, robot)
 
 def     get_map_choice():
     """Ask user to enter the map number.\n\
-            Return the map name associated with the number entered by the user\n\
+            Return the map name corresponding to the number entered by the user\n\
             or return None if the number entered is wrong"""
 
     maps = get_map_list()
@@ -46,14 +31,13 @@ def     get_map_choice():
         return None
 
 def     get_map_list():
-    """Print the list of available maps in the maps folder\ 
+    """Print the list of available maps in the maps folder\
     (defined in param.py) and return a list with the maps name"""
 
-    maps = listdir(maps_path)
+    maps = os.listdir(param.maps_path)
     print("Labyrinthes existants :")
     for i, map in enumerate(maps):
         if map.find(".txt") != -1:
             map = map.replace(".txt", "")
             print("  {} - {}.".format(i + 1, map))
     return maps
-
