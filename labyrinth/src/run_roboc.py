@@ -15,11 +15,33 @@ def     init_game():
     return (map)
 
 def     run_game(player_list, map):
+    robot_list = []
     for player in player_list:
         new_robot = Robot(map, player.id)
         robot_list.append(new_robot)
     for player in player_list:
-        player.send_message(map.__str__())
+        player.send_message(map.print(player.id))
+    winner = None
+    while (winner == None):
+        for player in player_list:
+            player.send_message("*** A toi de jouer ! ***\n")
+            valid_command = False
+            while valid_command == False:
+                player.send_message(map.print(player.id))
+                command = player.messenger.recv(1024).decode("utf-8")
+                if command == "fin":
+                    for player2 in player_list:
+                        player2.send_message("fin")
+                    return False
+                valid_command = robot_list[player.id - 1].move(command)
+                if not valid_command:
+                    player.send_message(param.str_usage())
+        winner = map.victory()
+    for player in player_list:
+        player.send_message("----> *** Le joueur {} a gagné !! *** <----".format(winner))
+        player.send_message("fin")
+    return True
+
 
 def     get_map_choice():
     """Ask user to enter the map number.\n\

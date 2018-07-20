@@ -33,17 +33,7 @@ class       Map:
         self._map = ""
         self._size = {'x': -1, 'y': -1}
         self._exit_coord = {'x': -1, 'y': -1}
-        self.robot = []
-
-    def     _find_robot(self):
-        self.robot.position['x'] = 0
-        for line in self._map:
-            self.robot.position['y'] = param.is_in_list(line, param.robot_char)
-            if (self.robot.position['y'] != -1):
-                break
-            self.robot.position['x'] += 1
-        self._map[self.robot.position['x']][self.robot.position['y']]\
-                = " "
+        self.robot_list = []
 
     def     _set_map_size(self):
         self._size['y'] = len(self._map[0])
@@ -65,7 +55,7 @@ class       Map:
         return (self._size['x'], self._size['y'])
 
     def     add_robot(self, robot):
-        self.robot.append(robot)
+        self.robot_list.append(robot)
 
     def     generate_from_file(self, file_name):
         with open(param.maps_path + file_name, "r") as my_file:
@@ -82,32 +72,31 @@ class       Map:
     def     get_case(self, coord):
         return self._map[coord['x']][coord['y']]
 
-    def     save(self, name):
-        if name == "":
-            print("La partie n'a pas été sauvegardé")
-            return False
-        if not os.path.exists(param.save_path):
-            os.makedirs(param.save_path)
-        if os.path.isfile(param.save_path + name + ".txt"):
-            confirm = input("Ce nom est déjà pris. Voulez-vous écraser le labyrinthe existant? (o pour confirmer)\n")
-            if confirm != "o":
-                print("La partie n'a pas été sauvegardé")
-                return False
-        save = self.__str__()
-        with open(param.save_path + name + ".txt", 'w') as my_file:
-            my_file.write(save)
-            print("Sauvegarde effectué ! ({})".format(param.save_path + name + ".txt"))
-        return True
+    def     victory(self):
+        for robot in self.robot_list:
+            if robot.position == self._exit_coord:
+                return (robot.id)
+        return None
 
-    def     __str__(self):
-        if hasattr(self, 'robot'):
-            tmp = self._map[self.robot.position['x']][self.robot.position['y']]
-            self._map[self.robot.position['x']][self.robot.position['y']] =\
-                    param.robot_char
+    def     print(self, id=-1):
+        tmp = []
+        if hasattr(self, 'robot_list'):
+            for robot in self.robot_list:
+                tmp.append(self.get_case(robot.position))
+                if robot.id == id or id < 0:
+                    self._map[robot.position['x']][robot.position['y']] =\
+                            param.robot_char
+                else:
+                    self._map[robot.position['x']][robot.position['y']] =\
+                            param.foe_char
         printable = []
         for line in self._map:
             printable.append("".join(line))
         printable = "\n".join(printable)
-        if hasattr(self, 'robot'):
-            self._map[self.robot.position['x']][self.robot.position['y']] = tmp
+        if hasattr(self, 'robot_list'):
+            for i, robot in enumerate(self.robot_list):
+                self._map[robot.position['x']][robot.position['y']] = tmp[i]
         return(printable)
+
+    def     __str__(self):
+        return (self.print())

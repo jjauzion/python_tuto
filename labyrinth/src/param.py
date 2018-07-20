@@ -37,6 +37,16 @@ def     usage():
     print("  --> '{}' + nb_de_case : Aller 'nb_de_cases' vers l'ouest".format(command_list[3]))
     print("  --> '{}' : Sauvegarder et quitter le jeu\n".format(quit_command))
 
+def     str_usage():
+    str = "\nGuide le robot ({}) vers la sortie ({})!\n".format(robot_char, exit_char)
+    str += "\nCommandes :\n"
+    str += "  --> '{}' + nb_de_case : Aller 'nb_de_cases' vers le nord\n".format(command_list[0])
+    str += "  --> '{}' + nb_de_case : Aller 'nb_de_cases' vers le sud\n".format(command_list[1])
+    str += "  --> '{}' + nb_de_case : Aller 'nb_de_cases' vers l'est\n".format(command_list[2])
+    str += "  --> '{}' + nb_de_case : Aller 'nb_de_cases' vers l'ouest\n".format(command_list[3])
+    str += "  --> '{}' : Sauvegarder et quitter le jeu\n\n".format(quit_command)
+    return str
+
 def     print_heading():
     print("")
     print("/----------------------------------------------------------\\")
