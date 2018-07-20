@@ -7,13 +7,19 @@ import src.param as param
 
 def     init_game():
     map = Map()
-    robot = Robot(map)
     print("Quelle carte voulez-vous héberger sur le serveur ?\n")
     map_name = None
     while map_name == None:
         map_name = get_map_choice()
     map.generate_from_file(map_name)
-    return (map, robot)
+    return (map)
+
+def     run_game(player_list, map):
+    for player in player_list:
+        new_robot = Robot(map, player.id)
+        robot_list.append(new_robot)
+    for player in player_list:
+        player.send_message(map.__str__())
 
 def     get_map_choice():
     """Ask user to enter the map number.\n\

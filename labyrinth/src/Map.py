@@ -18,7 +18,8 @@ class       Map:
             | add_robot(self, robot)\n\
             |     Link robot to the map\n\
             |\n\
-            | get_case(self, x, y)\n\
+            | get_case(self, coord)\n\
+            |     input coord shall be a dictionary with at least 'x' and 'y' key\n\
             |     Return the value of the case at coordinate (x,y)\n\
             |\n\
             | save(self, name)\n\
@@ -32,6 +33,7 @@ class       Map:
         self._map = ""
         self._size = {'x': -1, 'y': -1}
         self._exit_coord = {'x': -1, 'y': -1}
+        self.robot = []
 
     def     _find_robot(self):
         self.robot.position['x'] = 0
@@ -43,7 +45,7 @@ class       Map:
         self._map[self.robot.position['x']][self.robot.position['y']]\
                 = " "
 
-    def     _get_map_size(self):
+    def     _set_map_size(self):
         self._size['y'] = len(self._map[0])
         self._size['x'] = len(self._map)
 
@@ -59,24 +61,26 @@ class       Map:
         for i, line in enumerate(self._map):
             self._map[i] = list(line)
 
+    def     get_map_size(self):
+        return (self._size['x'], self._size['y'])
+
     def     add_robot(self, robot):
-        self.robot = robot
+        self.robot.append(robot)
 
     def     generate_from_file(self, file_name):
         with open(param.maps_path + file_name, "r") as my_file:
             content = my_file.read()
-        if (content.find(param.robot_char) == -1) |\
-                (content.find(param.exit_char) == -1):
+        content.replace(param.robot_char, " ")
+        if (content.find(param.exit_char) == -1):
             raise RobocError("Le fichier {} n'est pas une carte valide"\
                     .format(param.maps_path + file_name))
         self._map = content.split("\n")
         self._split_lines()
-        self._get_map_size()
+        self._set_map_size()
         self._get_map_exit()
-        self._find_robot()
 
-    def     get_case(self, x, y):
-        return self._map[x][y]
+    def     get_case(self, coord):
+        return self._map[coord['x']][coord['y']]
 
     def     save(self, name):
         if name == "":
@@ -99,7 +103,7 @@ class       Map:
         if hasattr(self, 'robot'):
             tmp = self._map[self.robot.position['x']][self.robot.position['y']]
             self._map[self.robot.position['x']][self.robot.position['y']] =\
-                    'X' ## A CHANGER !!! par robot_char
+                    param.robot_char
         printable = []
         for line in self._map:
             printable.append("".join(line))

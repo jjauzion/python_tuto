@@ -9,6 +9,7 @@ wall_char = "O"
 door_char = "."
 exit_char = "U"
 robot_char = "X"
+foe_char = "+"
 
 command_list = "NSEO"
 quit_command = "Q"
@@ -37,7 +38,7 @@ def     usage():
     print("  --> '{}' : Sauvegarder et quitter le jeu\n".format(quit_command))
 
 def     print_heading():
-    os.system("cls")
+    print("")
     print("/----------------------------------------------------------\\")
     print("|  _  .-')              .-. .-')                           |")
     print("| ( \( -O )             \  ( OO )                          |")

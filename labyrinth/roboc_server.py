@@ -4,17 +4,19 @@ import socket
 import select
 import src.param as param
 from src.run_roboc import init_game
-from src.network_functions import init_server, terminate_server
+from src.run_roboc import run_game
+from src.network_functions import init_server, terminate_connexions
+from src.server_function import add_player, chat_room
+from src.player import PlayerList
 
-map, robot = init_game()
+map = init_game()
 main_connexion = init_server('', 12800)
 
-server_run = True
-start_game = False
-new_connex = False
+server_param = {"run": True, "start_game": False, "game_started": False}
 connected_client = []
-while server_run:
-    if not start_game:
+player_list = PlayerList()
+while server_param["run"]:
+    if not server_param["game_started"]:
         #Looking for connexion request on the main_coonexion 
         connexion_request, wlist, xlist =\
                 select.select([main_connexion], [], [], 0.05)
@@ -22,28 +24,13 @@ while server_run:
         for connexion in connexion_request:
             client_connexion, connexion_detail = connexion.accept()
             connected_client.append(client_connexion)
-            new_connex = True
-        if new_connex == True:
-            for client in connected_client:
-                client.send("Nombre de joueur connecte (vous compris) : {}"\
-                        .format(len(connected_client)).encode())
-            new_connex = False
-    else:
-        print("Partie commencé !!")
-
-    #Browse through the client list for active client
-    active_client = []
-    try:
-        active_client, wlist, xlist = select.select(connected_client, [], [], 0.05)
-    except select.error:
-        pass
-    else:
-        for client in active_client:
-            msg_recv = client.recv(1024)
-            msg_recv = msg_recv.decode()
-            print("<-- ", msg_recv)
-            if msg_recv == param.start_command:
-                start_game = True
-            elif msg_recv == "fin":
-                server_run = False
-terminate_server(main_connexion, connected_client)
+            add_player(player_list, client_connexion)
+    if server_param["start_game"] == True:
+        server_param["start_game"] = False
+        server_param["game_started"] = True
+        main_connexion.close()
+        for client in connected_client:
+            client.send("Partie commencé !".encode("utf-8"))
+        run_game(player_list, map)
+    chat_room(connected_client, player_list, server_param)
+terminate_connexions(connected_client, main_connexion=main_connexion)

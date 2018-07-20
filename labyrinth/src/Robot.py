@@ -1,5 +1,6 @@
 from .RobocError import ExitRoboc
 import src.param as param
+import random
 
 class       Robot:
     """Class Robot()\n\
@@ -10,10 +11,20 @@ class       Robot:
             | move(self, command)\n\
             |     Try to move the robot base on the command\n"""
 
-    def     __init__(self, my_map):
+    def     _init_position(self, my_map):
+        x, y = my_map.get_map_size()
+        self.position['x'] = randrange(0, x)
+        self.position['y'] = randrange(0, x)
+        while my_map.get_case(self.position) != param.wall_char and\
+                my_map.get_case(self.position) != param.exit_char
+            self.position['x'] = randrange(0, x)
+            self.position['y'] = randrange(0, x)
+
+    def     __init__(self, my_map, id):
         self._map = my_map
+        self._init_position(my_map)
+        self._id = id
         self._map.add_robot(self)
-        self.position = {'x': 0, 'y': 0}
 
     def     _update_coord(self, direction, coord):
         tmp = dict(coord)
