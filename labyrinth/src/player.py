@@ -3,6 +3,7 @@ class       Player():
             -> it's id (proctected attribute)\
             -> it's listener socket\
             -> it's messenger socket\
+            -> it's command for robot next move\
         No required argument at player creation"""
 
     nb_of_player = 0
@@ -12,6 +13,9 @@ class       Player():
         Player.nb_of_player += 1
         self._id = Player.nb_of_player
         Player.used_id.append(self._id)
+        self.command = None
+        self.listener = None
+        self.listener_socket = None
 
     def     _get_id(self):
         return self._id
@@ -46,7 +50,11 @@ class PlayerList():
             yield player
 
     def     __len__(self):
-        return len(self.list)
+        cpt = 0
+        for player in self:
+            if player.listener != None:
+                cpt += 1
+        return cpt
 
     def     get_id(self, socket):
         for player in self.list:
@@ -59,3 +67,8 @@ class PlayerList():
             if player.id == id:
                 player.set_listener(connexion)
                 break
+
+    def     set_command(self, id, command):
+        for player in self.list:
+            if player.id == id:
+                player.command = command

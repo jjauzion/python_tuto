@@ -26,6 +26,9 @@ class       Map:
             |     Save the current status of the map with the name\
             given in argument. If name already exist ask for confirmation\n\
             |\n\
+            | print(self)\n\
+            |     Return 2d printable string of the current map\n\
+            |\n\
             | __str__(self)\n\
             |     Return 2d printable string of the current map\n"""
 
@@ -50,6 +53,8 @@ class       Map:
     def     _split_lines(self):
         for i, line in enumerate(self._map):
             self._map[i] = list(line)
+        y_max = len(self._map[0])
+        self._map[:] = [line for line in self._map if len(line) == y_max]
 
     def     get_map_size(self):
         return (self._size['x'], self._size['y'])
@@ -69,6 +74,9 @@ class       Map:
         self._set_map_size()
         self._get_map_exit()
 
+    def     set_case(self, coord, value):
+        self._map[coord['x']][coord['y']] = value
+
     def     get_case(self, coord):
         return self._map[coord['x']][coord['y']]
 
@@ -82,7 +90,14 @@ class       Map:
         tmp = []
         if hasattr(self, 'robot_list'):
             for robot in self.robot_list:
-                tmp.append(self.get_case(robot.position))
+                if self.get_case(robot.position) == param.robot_char or\
+                        self.get_case(robot.position) == param.foe_char:
+                    tmp.append(" ")
+                    self._map[robot.position['x']][robot.position['y']] =\
+                            param.robot_char
+                    #break
+                else:
+                    tmp.append(self.get_case(robot.position))
                 if robot.id == id or id < 0:
                     self._map[robot.position['x']][robot.position['y']] =\
                             param.robot_char
@@ -94,8 +109,10 @@ class       Map:
             printable.append("".join(line))
         printable = "\n".join(printable)
         if hasattr(self, 'robot_list'):
-            for i, robot in enumerate(self.robot_list):
+            i = 0
+            for robot in self.robot_list:
                 self._map[robot.position['x']][robot.position['y']] = tmp[i]
+                i += 1
         return(printable)
 
     def     __str__(self):

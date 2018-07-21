@@ -13,10 +13,12 @@ class   Listener(Thread):
         self.connexion = connexion
     def run(self):
         msg = b""
-        while msg.decode() != "fin":
+        while msg.decode() != (param.command_char + param.exit_command):
             msg = self.connexion.recv(1024)
-            print("\n" + msg.decode("utf-8") + "\n> ", end = "")
-            time.sleep(0.05)
+            if msg.decode() != (param.command_char + param.exit_command):
+                print("\n" + msg.decode("utf-8") + "\n> ", end = "")
+            else:
+                print("Connexion avec le serveur terminé. Bye !")
 
 class   Messenger(Thread):
     """Create a thread that send message on an openned connexion"""
@@ -30,10 +32,9 @@ class   Messenger(Thread):
         return self._stop_event.is_set()
     def run(self):
         msg = ""
-        while msg != "fin":
+        while msg != (param.command_char + param.exit_command):
             msg = input("> ")
             if self.stopped():
-                print("*** Message non remis, le serveur a été stoppé ***")
                 break
             self.connexion.send(msg.encode("utf-8"))
 
@@ -49,7 +50,7 @@ def     terminate_connexions(connexion_list, main_connexion=None):
     nb_of_connexion = 0
     for client in connexion_list:
         if main_connexion:
-            client.send(b"fin")
+            client.send((param.command_char + param.exit_command).encode())
         client.close()
         nb_of_connexion += 1
     if main_connexion:

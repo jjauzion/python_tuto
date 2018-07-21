@@ -2,6 +2,8 @@ from .Map import Map
 from .Robot import Robot
 import os
 import src.param as param
+from threading import Thread, RLock
+import time
 
 # -*-coding:Utf-8 -*
 
@@ -14,33 +16,53 @@ def     init_game():
     map.generate_from_file(map_name)
     return (map)
 
-def     run_game(player_list, map):
+locker = RLock()
+
+def     game_manager(player_list, robot_list, map, server_param):
+    winner = None
+    while (winner == None and server_param["run"]):
+        for player in player_list:
+            with locker:
+                player.command = None
+                player.send_message("\n*** A toi de jouer ! ***\n")
+                player.send_message(map.print(player.id))
+            valid_command = False
+            while valid_command == False and server_param["run"]:
+                command = None
+                while (command == None) and server_param["run"]:
+                    with locker:
+                        command = player.command
+                    time.sleep(0.1)
+                if not command or command == param.exit_command:
+                    return
+                valid_command = robot_list[player.id - 1].move(command)
+                with locker:
+                    if not valid_command:
+                        player.send_message(param.str_usage())
+                    player.command = None
+            with locker:
+                player.send_message(map.print(player.id))
+            winner = map.victory()
+            if winner:
+                break
+            player.send_message("\n*** C'est au tour des autres joueurs... ***\n")
+    for player in player_list:
+        with locker:
+            if player.id != winner:
+                player.send_message("*** Perdu !! Le joueur {} a gagné... *** <----\n".format(winner))
+            else:
+                player.send_message("----> *** Bravo !! Vous avez gagné ! *** <----\n".format(winner))
+
+def     run_game(player_list, map, server_param):
     robot_list = []
     for player in player_list:
         new_robot = Robot(map, player.id)
         robot_list.append(new_robot)
+        player.command = None
     for player in player_list:
         player.send_message(map.print(player.id))
-    winner = None
-    while (winner == None):
-        for player in player_list:
-            player.send_message("*** A toi de jouer ! ***\n")
-            valid_command = False
-            while valid_command == False:
-                player.send_message(map.print(player.id))
-                command = player.messenger.recv(1024).decode("utf-8")
-                if command == "fin":
-                    for player2 in player_list:
-                        player2.send_message("fin")
-                    return False
-                valid_command = robot_list[player.id - 1].move(command)
-                if not valid_command:
-                    player.send_message(param.str_usage())
-        winner = map.victory()
-    for player in player_list:
-        player.send_message("----> *** Le joueur {} a gagné !! *** <----".format(winner))
-        player.send_message("fin")
-    return True
+    game_thread = Thread(target=game_manager, args=(player_list, robot_list, map, server_param))
+    return game_thread
 
 
 def     get_map_choice():

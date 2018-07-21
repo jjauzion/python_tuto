@@ -13,7 +13,6 @@ class       Robot:
 
     def     _init_random_position(self, my_map):
         x, y = my_map.get_map_size()
-        print("x = {}, y = {}".format(x,y))
         self.position['x'] = randrange(0, x)
         self.position['y'] = randrange(0, y)
         while my_map.get_case(self.position) == param.wall_char or\
@@ -26,10 +25,10 @@ class       Robot:
         self.position = {'x': -1, 'y': -1}
         self._init_random_position(my_map)
         self.id = id
+        print("robot {} posistion: x = {} ; y = {}".format(self.id, self.position['x'], self.position['y']))
         self._map.add_robot(self)
 
-    def     _update_coord(self, direction, coord):
-        tmp = dict(coord)
+    def     _add_direction(self, direction, coord):
         if direction == param.command_list[0]:
             coord['x'] -= 1
         elif direction == param.command_list[1]:
@@ -38,6 +37,10 @@ class       Robot:
             coord['y'] += 1
         elif direction == param.command_list[3]:
             coord['y'] -= 1
+
+    def     _update_coord(self, direction, coord):
+        tmp = dict(coord)
+        self._add_direction(direction, coord)
         if not self._position_is_valid(coord):
             coord['x'] = tmp['x']
             coord['y'] = tmp['y']
@@ -71,14 +74,40 @@ class       Robot:
             direction = command[0]
             assert param.command_list.find(direction) >= 0
         except (IndexError, AssertionError):
-            param.usage()
             return False
-        if len(command) > 1 and not (param.is_int(command[1:])):
-            param.usage()
+        if command[0] == param.command_list[4] or\
+                command[0] == param.command_list[5]:
+            return self.wall_action(command)
+        elif len(command) > 1 and not (param.is_int(command[1:])):
             return False
         elif len(command) > 1:
             length = int(command[1:])
         else:
             length = 1
         self._move_toward(direction, length)
+        return True
+
+    def     break_wall(self, command):
+        coord = dict(self.position)
+        self._add_direction(command[1], coord)
+        if self._map.get_case(coord) != param.wall_char:
+            return False
+        self._map.set_case(coord, param.door_char)
+        return True
+
+    def     wallup_door(self, command):
+        coord = dict(self.position)
+        self._add_direction(command[1], coord)
+        if self._map.get_case(coord) != param.door_char:
+            return False
+        self._map.set_case(coord, param.wall_char)
+        return True
+
+    def     wall_action(self, command):
+        if len(command) != 2 or param.command_list[:4].find(command[1]) < 0:
+            return False
+        if command[0] == param.command_list[4]:
+            self.wallup_door(command)
+        else:
+            self.break_wall(command)
         return True
