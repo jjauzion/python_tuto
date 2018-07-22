@@ -65,7 +65,9 @@ class       Map:
     def     generate_from_file(self, file_name):
         with open(param.maps_path + file_name, "r") as my_file:
             content = my_file.read()
-        content.replace(param.robot_char, " ")
+        content = content.replace(param.robot_char, " ")
+        content = content.replace(param.foe_char, " ")
+        print(content)
         if (content.find(param.exit_char) == -1):
             raise RobocError("Le fichier {} n'est pas une carte valide"\
                     .format(param.maps_path + file_name))

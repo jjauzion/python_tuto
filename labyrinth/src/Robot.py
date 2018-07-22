@@ -25,7 +25,6 @@ class       Robot:
         self.position = {'x': -1, 'y': -1}
         self._init_random_position(my_map)
         self.id = id
-        print("robot {} posistion: x = {} ; y = {}".format(self.id, self.position['x'], self.position['y']))
         self._map.add_robot(self)
 
     def     _add_direction(self, direction, coord):
