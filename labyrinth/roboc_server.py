@@ -44,3 +44,4 @@ if server_param["run"] and server_param["game_started"]:
     server_param["run"] = False
 chat_thread.join()
 terminate_connexions(connected_client, main_connexion=main_connexion)
+print("All connections closed")

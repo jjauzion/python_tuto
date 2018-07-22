@@ -47,7 +47,8 @@ class PlayerList():
 
     def     __iter__(self):
         for player in self.list:
-            yield player
+            if player.listener != None:
+                yield player
 
     def     __len__(self):
         cpt = 0

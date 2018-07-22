@@ -18,7 +18,7 @@ class   Listener(Thread):
             if msg.decode() != (param.command_char + param.exit_command):
                 print("\n" + msg.decode("utf-8") + "\n> ", end = "")
             else:
-                print("Connexion avec le serveur terminé. Bye !")
+                print("Connexion avec le serveur terminé.")
 
 class   Messenger(Thread):
     """Create a thread that send message on an openned connexion"""
@@ -47,16 +47,12 @@ def     init_server(hote, port):
     return main_connexion
 
 def     terminate_connexions(connexion_list, main_connexion=None):
-    nb_of_connexion = 0
     for client in connexion_list:
         if main_connexion:
             client.send((param.command_char + param.exit_command).encode())
         client.close()
-        nb_of_connexion += 1
     if main_connexion:
         main_connexion.close()
-        nb_of_connexion += 1
-    print("{} connexion(s) closed".format(nb_of_connexion))
 
 def     connect_to_server(hote, port, timeout, player_id=-1):
     start = time.time()

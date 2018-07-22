@@ -25,7 +25,8 @@ def     game_manager(player_list, robot_list, map, server_param):
             with locker:
                 player.command = None
                 player.send_message("\n*** A toi de jouer ! ***\n")
-                player.send_message(map.print(player.id))
+                for player_bis in player_list:
+                    player_bis.send_message(map.print(player_bis.id))
             valid_command = False
             while valid_command == False and server_param["run"]:
                 command = None

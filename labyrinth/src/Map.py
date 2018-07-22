@@ -93,15 +93,12 @@ class       Map:
                 if self.get_case(robot.position) == param.robot_char or\
                         self.get_case(robot.position) == param.foe_char:
                     tmp.append(" ")
-                    self._map[robot.position['x']][robot.position['y']] =\
-                            param.robot_char
-                    #break
                 else:
                     tmp.append(self.get_case(robot.position))
                 if robot.id == id or id < 0:
                     self._map[robot.position['x']][robot.position['y']] =\
                             param.robot_char
-                else:
+                elif self.get_case(robot.position) != param.robot_char:
                     self._map[robot.position['x']][robot.position['y']] =\
                             param.foe_char
         printable = []
