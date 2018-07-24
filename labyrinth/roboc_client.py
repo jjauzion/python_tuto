@@ -6,11 +6,13 @@ from src.network_functions import terminate_connexions
 from src.network_functions import Listener, Messenger
 import src.param as param
 
+host = "192.168.1.21"
+port = 12800
 print("Connexion au serveur en cours...")
-server_messenger, player_id = connect_to_server("localhost", 12800, 30)
+server_messenger, player_id = connect_to_server(host, port, 30)
 if not server_messenger:
     quit()
-server_listener, player_id = connect_to_server("localhost", 12800, 30, player_id)
+server_listener, player_id = connect_to_server(host, port, 30, player_id)
 if not server_listener:
     quit()
 print("Connexion au serveur réussi !")
