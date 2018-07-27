@@ -68,6 +68,7 @@ def     connect_to_server(hote, port, timeout, player_id=-1):
             connected = False
             wait_time = time.time() - start
         else:
+            print("else")
             connected = True
     if wait_time >= timeout:
         print("Timeout: echec de la connexion au serveur...")
